@@ -179,3 +179,4 @@ makefile
 my_account.session
 my_account.session-journal
 users.db
+test.py
