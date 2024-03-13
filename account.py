@@ -1,7 +1,6 @@
-import os
 import urllib.error
 from ast import literal_eval
-from os import getenv, remove
+from os import getenv, remove, mkdir
 
 from dotenv import load_dotenv
 from pyrogram import Client, filters
@@ -21,7 +20,7 @@ app = Client(name="my_account", api_id=API_ID, api_hash=API_HASH)
 db = Database('users.db')
 
 try:
-    os.mkdir('downloads')
+    mkdir('downloads')
 except FileExistsError:
     pass
 
