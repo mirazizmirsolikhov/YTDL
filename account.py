@@ -9,7 +9,7 @@ from pytube.innertube import _default_clients
 
 from database import Database
 
-_default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID"]
+_default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
 
 load_dotenv()
 API_ID = getenv('API_ID')
