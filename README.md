@@ -28,4 +28,4 @@ Run **create_database.py** to form the database.
 #### First time you launch account.py you have to follow the link shown in terminal and enter the code that will also be displayed in terminal.
 #### This will allow the bot to use your Google account in order to get access to YouTube.
 
-### Show some ❤️ and ⭐ the repo to support the project
+### Show some ❤️ and ⭐ the repo to support the project!
