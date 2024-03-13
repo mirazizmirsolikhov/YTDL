@@ -1,6 +1,8 @@
 Telegram bot based on Aiogram, Pyrogram and PyTube that allows to download any kind of videos from YouTube.
 Bot requires extra telegram account for bypassing file limits for bots and one Google account for accessing YouTube.
 
+Run **create_database.py** to form the database.
+
 Do not forget to create .env file with ADMIN_ID.
 There you can find an example of .env file.
 

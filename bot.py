@@ -89,91 +89,35 @@ async def url_determination(message: types.Message):
         await bot.send_message(chat_id=chat_id, text=WAIT, parse_mode=ParseMode.HTML)
     else:
         try:
-            if 'shorts' in message.text:
-                pattern1 = r'(?:https?://)?(?:www\.)?youtube\.com/shorts/([A-Za-z0-9_-]+)(?:\?si=[A-Za-z0-9_-]+)?'
-                matches1 = findall(pattern1, message.text)
-                pattern2 = r'(?:youtu\.be/|youtube\.com/watch\?v=)([A-Za-z0-9_-]+)'
-                matches2 = findall(pattern2, message.text)
+            pattern1 = r'(?:https?://)?(?:www\.)?youtube\.com/shorts/([A-Za-z0-9_-]+)(?:\?si=[A-Za-z0-9_-]+)?'
+            matches1 = findall(pattern1, message.text)
+            pattern2 = r'(?:youtu\.be/|youtube\.com/watch\?v=)([A-Za-z0-9_-]+)'
+            matches2 = findall(pattern2, message.text)
 
-                matches = matches1 + matches2
+            matches = matches1 + matches2
 
-                exists = db.file_exists(url=matches[0])
-                if exists is not None:
-                    await bot.send_video(
-                        chat_id=chat_id, video=exists[0], caption=VIDEO_CAPTION, parse_mode=ParseMode.HTML
-                    )
-                    db.increase_nod(user_id=chat_id)
-                else:
-                    if len(matches) > 1:
-                        await bot.send_message(chat_id=chat_id, parse_mode=ParseMode.HTML, text=MULTIPLE_LINKS)
-                    else:
-                        await bot.send_message(chat_id=chat_id, text=DOWNLOADING_STARTED, parse_mode=ParseMode.HTML)
-
-                        file_name = matches[0]
-                        url = f'https://youtube.com/shorts/{file_name}'
-
-                        to_send = {
-                            "url": url,
-                            "id": chat_id,
-                            "message_id": message_id,
-                            "file_name": file_name,
-                            "source": "yt"
-                        }
-                        await bot.send_message(chat_id=int(HOST_ID), text=to_send)
-            elif 'instagram' in message.text:
-                pattern = r'((?:https?://)?(?:www\.)?instagram\.com/(?:p|reel)/([^/?#&]+)).*'
-                matches = findall(pattern, message.text)
-
+            exists = db.file_exists(url=matches[0])
+            if exists is not None:
+                await bot.send_video(
+                    chat_id=chat_id, video=exists[0], caption=VIDEO_CAPTION, parse_mode=ParseMode.HTML
+                )
+                db.increase_nod(user_id=chat_id)
+            else:
                 if len(matches) > 1:
                     await bot.send_message(chat_id=chat_id, parse_mode=ParseMode.HTML, text=MULTIPLE_LINKS)
                 else:
                     await bot.send_message(chat_id=chat_id, text=DOWNLOADING_STARTED, parse_mode=ParseMode.HTML)
 
-                    url = matches[0][0]
-                    file_name = matches[0][1]
+                    file_name = matches[0]
+                    url = f'https://www.youtube.com/watch?v={file_name}'
 
                     to_send = {
                         "url": url,
                         "id": chat_id,
                         "message_id": message_id,
-                        "file_name": file_name,
-                        "source": "ig"
+                        "file_name": file_name
                     }
                     await bot.send_message(chat_id=int(HOST_ID), text=to_send)
-
-            else:
-                pattern = r'(?:youtu\.be/|youtube\.com/watch\?v=)([A-Za-z0-9_-]+)'
-                matches = findall(pattern, message.text)
-
-                if len(matches) == 0:
-                    await bot.send_message(
-                        chat_id=chat_id, text=LINK_NOT_FOUND, parse_mode=ParseMode.HTML
-                    )
-                else:
-                    exists = db.file_exists(url=matches[0])
-                    if exists is not None:
-                        await bot.send_video(
-                            chat_id=chat_id, video=exists[0], caption=VIDEO_CAPTION, parse_mode=ParseMode.HTML
-                        )
-                        db.increase_nod(user_id=chat_id)
-                    else:
-                        if len(matches) > 1:
-                            await bot.send_message(chat_id=chat_id, parse_mode=ParseMode.HTML, text=MULTIPLE_LINKS)
-                        else:
-                            await bot.send_message(
-                                chat_id=chat_id, text=DOWNLOADING_STARTED, parse_mode=ParseMode.HTML
-                            )
-
-                            url = f'https://www.youtube.com/watch?v={matches[0]}'
-                            to_send = {
-                                "url": url,
-                                "id": chat_id,
-                                "message_id": message_id,
-                                "file_name": matches[0],
-                                "source": "yt"
-                            }
-                            await bot.send_message(chat_id=int(HOST_ID), text=to_send)
-
         except IndexError:
             await bot.edit_message_text(
                 chat_id=chat_id, message_id=message.message_id + 1, text=LINK_NOT_FOUND, parse_mode=ParseMode.HTML
