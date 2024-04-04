@@ -176,7 +176,10 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/python
 
 makefile
-my_account.session
-my_account.session-journal
-users.db
+
+*.session
+*.session-journal
+
+*.db
+
 test.py
