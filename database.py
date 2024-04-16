@@ -12,7 +12,13 @@ class Database:
         Checks if a user exists in the database.
         """
         with self.connection:
-            result = self.cursor.execute('SELECT user_id from users WHERE user_id = ?', (user_id,)).fetchone()
+            result = self.cursor.execute(
+                '''
+                SELECT user_id
+                FROM users
+                WHERE user_id = ?;
+                ''', (user_id,)
+            ).fetchone()
             return False if result is None else True
 
     def create_user(self, user_id: int, first_name: str, username: str) -> sqlite3.Cursor:
@@ -21,8 +27,11 @@ class Database:
         """
         with self.connection:
             result = self.cursor.execute(
-                'INSERT INTO users (user_id, first_name, username, status, is_superuser, is_active) VALUES (?, ?, ?, ?, ?, ?)',
-                (user_id, first_name, username, 0, 0, 1,)
+                '''
+                INSERT INTO users (user_id, first_name, username, status, is_superuser, is_active)
+                VALUES (?, ?, ?, ?, ?, ?);
+                ''',
+                (user_id, first_name, username, 0, 0, 1)
             )
             return result
 
@@ -31,7 +40,13 @@ class Database:
         Sets user as active.
         """
         with self.connection:
-            result = self.cursor.execute('UPDATE users SET is_active = ? WHERE user_id = ?', (is_active, user_id,))
+            result = self.cursor.execute(
+                '''
+                UPDATE users
+                SET is_active = ?
+                WHERE user_id = ?;
+                ''', (is_active, user_id)
+            )
             return result
 
     def get_users(self) -> List[tuple]:
@@ -39,7 +54,12 @@ class Database:
         Lists all users.
         """
         with self.connection:
-            result = self.cursor.execute('SELECT user_id, is_active FROM users').fetchall()
+            result = self.cursor.execute(
+                '''
+                SELECT user_id, is_active
+                FROM users;
+                '''
+            ).fetchall()
             return result
 
     def is_admin(self, user_id: int) -> Tuple[int]:
@@ -47,7 +67,13 @@ class Database:
         Checks if user is an admin.
         """
         with self.connection:
-            result = self.cursor.execute('SELECT is_superuser FROM users WHERE user_id = ?', (user_id,)).fetchone()
+            result = self.cursor.execute(
+                '''
+                SELECT is_superuser
+                FROM users
+                WHERE user_id = ?;
+                ''', (user_id,)
+            ).fetchone()
             return result
 
     def set_status(self, user_id: int, status: int) -> sqlite3.Cursor:
@@ -55,7 +81,13 @@ class Database:
         Changes user's downloading status.
         """
         with self.connection:
-            result = self.cursor.execute('UPDATE users SET status = ? WHERE user_id = ?', (status, user_id,))
+            result = self.cursor.execute(
+                '''
+                UPDATE users
+                SET status = ?
+                WHERE user_id = ?;
+                ''', (status, user_id)
+            )
             return result
 
     def see_status(self, user_id: int) -> Tuple[int]:
@@ -63,7 +95,13 @@ class Database:
         Shows user's downloading status.
         """
         with self.connection:
-            result = self.cursor.execute('SELECT status FROM users WHERE user_id = ?', (user_id,)).fetchone()
+            result = self.cursor.execute(
+                '''
+                SELECT status
+                FROM users
+                WHERE user_id = ?;
+                ''', (user_id,)
+            ).fetchone()
             return result
 
     def increase_nod(self, user_id: int) -> sqlite3.Cursor:
@@ -72,7 +110,11 @@ class Database:
         """
         with self.connection:
             result = self.cursor.execute(
-                '''UPDATE users SET number_of_downloads = number_of_downloads + 1 WHERE user_id = ?;''',
+                '''
+                UPDATE users
+                SET number_of_downloads = number_of_downloads + 1
+                WHERE user_id = ?;
+                ''',
                 (user_id,)
             )
             return result
@@ -82,7 +124,13 @@ class Database:
         Checks if file_id with given url exists and returns file_id if one exists.
         """
         with self.connection:
-            result = self.cursor.execute('SELECT file_id FROM links WHERE url = ?', (url,)).fetchone()
+            result = self.cursor.execute(
+                '''
+                SELECT file_id
+                FROM links
+                WHERE url = ?;
+                ''', (url,)
+            ).fetchone()
             return result
 
     def file_save(self, file_id: str, url: str) -> sqlite3.Cursor:
@@ -90,5 +138,10 @@ class Database:
         Saves file_id with given url.
         """
         with self.connection:
-            result = self.cursor.execute('INSERT INTO links (file_id, url) VALUES (?, ?)', (file_id, url,))
+            result = self.cursor.execute(
+                '''
+                INSERT INTO links (file_id, url)
+                VALUES (?, ?);
+                ''', (file_id, url)
+            )
             return result
