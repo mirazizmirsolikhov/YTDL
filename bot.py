@@ -65,7 +65,7 @@ async def admin_inform(message: types.Message):
 
 
 @dp.message_handler(filters.IDFilter(chat_id=int(HOST_ID)), content_types=types.ContentTypes.VIDEO)
-async def host_video(message: types.Video):
+async def host_video(message: types.Message):
     """
     Accepts video from host account.
     """
@@ -134,7 +134,7 @@ async def url_determination(message: types.Message):
                         "message_id": message_id,
                         "file_name": file_name
                     }
-                    await bot.send_message(chat_id=int(HOST_ID), text=to_send)
+                    await bot.send_message(chat_id=int(HOST_ID), text=f'{to_send}')
         except IndexError:
             await bot.edit_message_text(
                 chat_id=chat_id, message_id=message.message_id + 1, text=LINK_NOT_FOUND, parse_mode=ParseMode.HTML
