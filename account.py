@@ -27,13 +27,10 @@ except FileExistsError:
 
 
 @app.on_message(filters.user(int(BOT_ID)))
-async def download(client, message: Message):
+async def download(client: Client, message: Message):
     """
-    The function checks file size. If it is bigger than 2.0 GB, it raises an error.
+    Checks file size. If it is bigger than 2.0 GB, it raises an error.
     Otherwise, the video downloading starts.
-    :param client:
-    :param message:
-    :return:
     """
     json_data = literal_eval(message.text)
     user_id = json_data['id']

@@ -28,9 +28,7 @@ dp.middleware.setup(LoggingMiddleware())
 async def on_start(message: types.Message):
     """
     Start command handler.
-    Registers user if one doesn't exist in database.
-    :param message:
-    :return:
+    Registers user if one does not exist in database.
     """
     user_id = message.from_user.id
     first_name = message.from_user.first_name
@@ -47,9 +45,8 @@ async def on_start(message: types.Message):
 @dp.message_handler(commands=['inform'])
 async def admin_inform(message: types.Message):
     """
-    Private admin command for message spreading.
-    :param message:
-    :return:
+    Sends some text to all users.
+    Admin status required.
     """
     user_id = message.from_user.id
 
@@ -70,9 +67,7 @@ async def admin_inform(message: types.Message):
 @dp.message_handler(filters.IDFilter(chat_id=int(HOST_ID)), content_types=types.ContentTypes.VIDEO)
 async def host_video(message: types.Video):
     """
-    The function accepts video from host account.
-    :param message:
-    :return:
+    Accepts video from host account.
     """
     file_id = message.video.file_id
     json_data = literal_eval(message.caption)
@@ -88,9 +83,7 @@ async def host_video(message: types.Video):
 @dp.message_handler(filters.IDFilter(chat_id=int(HOST_ID)), content_types=types.ContentTypes.TEXT)
 async def host_text(message: types.Message):
     """
-    The function for sending an error message to user in case any error occurs.
-    :param message:
-    :return:
+    Sends an error message to user in case any error occurs.
     """
     json_data = literal_eval(message.text)
 
@@ -103,9 +96,7 @@ async def host_text(message: types.Message):
 @dp.message_handler(content_types=types.ContentTypes.TEXT)
 async def url_determination(message: types.Message):
     """
-    The function validates urls using regex.
-    :param message:
-    :return:
+    Validates urls using regex.
     """
     chat_id = message.chat.id
     message_id = message.message_id
