@@ -56,7 +56,8 @@ class Database:
         with self.connection:
             result = self.cursor.execute(
                 '''
-                SELECT user_id, is_active
+                SELECT user_id,
+                    is_active
                 FROM users;
                 '''
             ).fetchall()
@@ -143,5 +144,21 @@ class Database:
                 INSERT INTO links (file_id, url)
                 VALUES (?, ?);
                 ''', (file_id, url)
+            )
+            return result
+
+    def update_user(self, user_id: int, first_name: str, username: str, is_active: int) -> sqlite3.Cursor:
+        """
+        Updates data about user.
+        """
+        with self.connection:
+            result = self.cursor.execute(
+                '''
+                UPDATE users
+                SET first_name = ?,
+                    username = ?,
+                    is_active = ?
+                WHERE user_id = ?;
+                ''', (first_name, username, is_active, user_id)
             )
             return result

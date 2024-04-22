@@ -37,7 +37,7 @@ async def on_start(message: types.Message):
     if message.chat.type == 'private':
         if not db.user_exists(user_id):
             db.create_user(user_id=user_id, first_name=first_name, username=username)
-        db.set_active(user_id=user_id, is_active=1)
+        db.update_user(user_id=user_id, first_name=first_name, username=username, is_active=1)
 
     await message.reply(text=START_MESSAGE, parse_mode=ParseMode.HTML)
 
@@ -100,6 +100,11 @@ async def url_determination(message: types.Message):
     """
     chat_id = message.chat.id
     message_id = message.message_id
+
+    first_name = message.from_user.first_name
+    username = message.from_user.username
+    db.update_user(user_id=chat_id, first_name=first_name, username=username, is_active=1)
+
     status = db.see_status(chat_id)
 
     if 1 in status:
