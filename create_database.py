@@ -37,7 +37,7 @@ def create_database() -> None:
     cursor.execute('''
         INSERT INTO users (user_id, first_name, status, is_superuser, is_active)
         VALUES (?, ?, ?, ?, ?);
-    ''', (ADMIN_ID, 'admin', 0, 1, 1,))
+    ''', (ADMIN_ID, 'admin', 0, 1, 1))
     database.commit()
     database.close()
 
