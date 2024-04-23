@@ -2,7 +2,6 @@ import typing
 from ast import literal_eval
 from logging import INFO, basicConfig
 from os import getenv
-from re import findall
 
 from aiogram import Bot, Dispatcher, types, filters
 from aiogram.contrib.middlewares.logging import LoggingMiddleware

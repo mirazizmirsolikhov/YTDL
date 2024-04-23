@@ -1,4 +1,5 @@
 import re
+from typing import Union, Dict, List
 
 from aiogram import types
 from aiogram.dispatcher.filters import BoundFilter
@@ -10,7 +11,7 @@ class IsCorrectLink(BoundFilter):
     """
     key = 'is_correct_link'
 
-    async def check(self, message: types.Message):
+    async def check(self, message: types.Message) -> Union[bool, Dict[str, List[str]]]:
         pattern1 = r'(?:https?://)?(?:www\.)?youtube\.com/shorts/([A-Za-z0-9_-]+)(?:\?si=[A-Za-z0-9_-]+)?'
         matches1 = re.findall(pattern1, message.text)
         pattern2 = r'(?:youtu\.be/|youtube\.com/watch\?v=)([A-Za-z0-9_-]+)'

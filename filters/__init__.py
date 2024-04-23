@@ -1,6 +1,6 @@
 from aiogram import Dispatcher
 
-from .filters import IsCorrectLink
+from .link import IsCorrectLink
 
 
 def setup(dp: Dispatcher):
