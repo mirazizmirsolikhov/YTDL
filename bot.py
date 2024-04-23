@@ -1,3 +1,4 @@
+import typing
 from ast import literal_eval
 from logging import INFO, basicConfig
 from os import getenv
@@ -11,6 +12,7 @@ from dotenv import load_dotenv
 
 from captions import *
 from database import Database
+from filters import IsCorrectLink
 
 load_dotenv()
 TOKEN = getenv('TOKEN')
@@ -93,8 +95,8 @@ async def host_text(message: types.Message):
     )
 
 
-@dp.message_handler(content_types=types.ContentTypes.TEXT)
-async def url_determination(message: types.Message):
+@dp.message_handler(IsCorrectLink())
+async def url_determination(message: types.Message, matches: typing.List[str]):
     """
     Validates urls using regex.
     """
@@ -112,13 +114,6 @@ async def url_determination(message: types.Message):
     else:
         try:
             await bot.send_message(chat_id=chat_id, text=DOWNLOADING_STARTED, parse_mode=ParseMode.HTML)
-
-            pattern1 = r'(?:https?://)?(?:www\.)?youtube\.com/shorts/([A-Za-z0-9_-]+)(?:\?si=[A-Za-z0-9_-]+)?'
-            matches1 = findall(pattern1, message.text)
-            pattern2 = r'(?:youtu\.be/|youtube\.com/watch\?v=)([A-Za-z0-9_-]+)'
-            matches2 = findall(pattern2, message.text)
-
-            matches = matches1 + matches2
 
             exists = db.file_exists(url=matches[0])
             if exists is not None:
@@ -148,5 +143,7 @@ async def url_determination(message: types.Message):
 
 if __name__ == '__main__':
     from aiogram import executor
+    import filters
 
+    filters.setup(dp)
     executor.start_polling(dp, skip_updates=True)
