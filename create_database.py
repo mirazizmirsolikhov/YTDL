@@ -15,7 +15,8 @@ def create_database() -> None:
     database = sqlite3.connect("users.db")
     cursor = database.cursor()
 
-    cursor.executescript('''
+    cursor.executescript(
+        '''
         CREATE TABLE IF NOT EXISTS users(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER UNIQUE NOT NULL,
@@ -25,19 +26,24 @@ def create_database() -> None:
             is_superuser BOOL NOT NULL,
             is_active BOOL,
             number_of_downloads INTEGER DEFAULT (0)
-        ); 
-    ''')
-    cursor.executescript('''
+        );
+        '''
+    )
+    cursor.executescript(
+        '''
         CREATE TABLE IF NOT EXISTS links(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             file_id VARCHAR NOT NULL,
             url VARCHAR(11) NOT NULL
         );
-    ''')
-    cursor.execute('''
+        '''
+    )
+    cursor.execute(
+        '''
         INSERT INTO users (user_id, first_name, status, is_superuser, is_active)
         VALUES (?, ?, ?, ?, ?);
-    ''', (ADMIN_ID, 'admin', 0, 1, 1))
+        ''',
+        (ADMIN_ID, 'admin', 0, 1, 1))
     database.commit()
     database.close()
 

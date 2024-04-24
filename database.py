@@ -17,7 +17,8 @@ class Database:
                 SELECT user_id
                 FROM users
                 WHERE user_id = ?;
-                ''', (user_id,)
+                ''',
+                (user_id,)
             ).fetchone()
             return False if result is None else True
 
@@ -45,7 +46,8 @@ class Database:
                 UPDATE users
                 SET is_active = ?
                 WHERE user_id = ?;
-                ''', (is_active, user_id)
+                ''',
+                (is_active, user_id)
             )
             return result
 
@@ -73,7 +75,8 @@ class Database:
                 SELECT is_superuser
                 FROM users
                 WHERE user_id = ?;
-                ''', (user_id,)
+                ''',
+                (user_id,)
             ).fetchone()
             return result
 
@@ -87,7 +90,8 @@ class Database:
                 UPDATE users
                 SET status = ?
                 WHERE user_id = ?;
-                ''', (status, user_id)
+                ''',
+                (status, user_id)
             )
             return result
 
@@ -101,7 +105,8 @@ class Database:
                 SELECT status
                 FROM users
                 WHERE user_id = ?;
-                ''', (user_id,)
+                ''',
+                (user_id,)
             ).fetchone()
             return result
 
@@ -130,7 +135,8 @@ class Database:
                 SELECT file_id
                 FROM links
                 WHERE url = ?;
-                ''', (url,)
+                ''',
+                (url,)
             ).fetchone()
             return result
 
@@ -143,7 +149,8 @@ class Database:
                 '''
                 INSERT INTO links (file_id, url)
                 VALUES (?, ?);
-                ''', (file_id, url)
+                ''',
+                (file_id, url)
             )
             return result
 
@@ -159,6 +166,7 @@ class Database:
                     username = ?,
                     is_active = ?
                 WHERE user_id = ?;
-                ''', (first_name, username, is_active, user_id)
+                ''',
+                (first_name, username, is_active, user_id)
             )
             return result
