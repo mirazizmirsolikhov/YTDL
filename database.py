@@ -14,7 +14,7 @@ class Database:
         self.cursor = self.connection.cursor()
         self.create_tables()
 
-    def create_tables(self):
+    def create_tables(self) -> None:
         """
         Creates tables if they do not exist.
         """
