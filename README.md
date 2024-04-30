@@ -12,7 +12,7 @@ Bot requires extra telegram account for bypassing file limits for bots and one G
 
 ## Creating Database
 
-Run **create_database.py** to form the database.
+You do not have to create it manually. It is formed automatically.
 
 ## Configuring Environments
 - `ADMIN_ID` : Your account`s Telegram ID.
