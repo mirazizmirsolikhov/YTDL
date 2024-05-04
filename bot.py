@@ -1,36 +1,35 @@
 import typing
 from ast import literal_eval
 from logging import INFO, basicConfig
-from os import getenv
 
-from aiogram import Bot, Dispatcher, types, filters
+from aiogram import Bot, Dispatcher, types, executor
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from aiogram.types import ParseMode
 from aiogram.utils.exceptions import BotBlocked
-from dotenv import load_dotenv
 
+import filters
 from captions import *
+from config import Config
 from database import Database
-from filters import IsCorrectLink
 
-load_dotenv()
-TOKEN = getenv('TOKEN')
-HOST_ID = getenv('HOST_ID')
+TOKEN = Config.TOKEN
+HOST_ID = Config.HOST_ID
+DATABASE_NAME = Config.DATABASE_NAME
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot=bot)
-db = Database('users.db')
+db = Database(DATABASE_NAME)
 
 basicConfig(level=INFO)
 dp.middleware.setup(LoggingMiddleware())
 
 
 @dp.message_handler(commands=['start'])
-async def on_start(message: types.Message):
+async def on_start(message: types.Message) -> None:
     """
-    Start command handler.
     Registers user if one does not exist in database.
     """
+
     user_id = message.from_user.id
     first_name = message.from_user.first_name
     username = message.from_user.username
@@ -44,11 +43,12 @@ async def on_start(message: types.Message):
 
 
 @dp.message_handler(commands=['inform'])
-async def admin_inform(message: types.Message):
+async def admin_inform(message: types.Message) -> None:
     """
     Sends some text to all users.
     Admin status required.
     """
+
     user_id = message.from_user.id
 
     if message.chat.type == 'private':
@@ -65,11 +65,12 @@ async def admin_inform(message: types.Message):
                     db.set_active(user_id=i[0], is_active=0)
 
 
-@dp.message_handler(filters.IDFilter(chat_id=int(HOST_ID)), content_types=types.ContentTypes.VIDEO)
-async def host_video(message: types.Message):
+@dp.message_handler(filters.IDFilter(chat_id=HOST_ID), content_types=types.ContentTypes.VIDEO)
+async def host_video(message: types.Message) -> None:
     """
     Accepts video from host account.
     """
+
     file_id = message.video.file_id
     json_data = literal_eval(message.caption)
 
@@ -81,24 +82,25 @@ async def host_video(message: types.Message):
         db.set_active(user_id=json_data['id'], is_active=0)
 
 
-@dp.message_handler(filters.IDFilter(chat_id=int(HOST_ID)), content_types=types.ContentTypes.TEXT)
-async def host_text(message: types.Message):
+@dp.message_handler(filters.IDFilter(chat_id=HOST_ID), content_types=types.ContentTypes.TEXT)
+async def host_text(message: types.Message) -> None:
     """
     Sends an error message to user in case any error occurs.
     """
-    json_data = literal_eval(message.text)
 
+    json_data = literal_eval(message.text)
     await bot.edit_message_text(
         chat_id=json_data['id'], message_id=json_data['message_id'] + 1, parse_mode=ParseMode.HTML,
         text=LINK_NOT_FOUND
     )
 
 
-@dp.message_handler(IsCorrectLink())
-async def url_determination(message: types.Message, matches: typing.List[str]):
+@dp.message_handler(filters.IsCorrectLink())
+async def url_determination(message: types.Message, matches: typing.List[str]) -> None:
     """
     Validates urls using regex.
     """
+
     chat_id = message.chat.id
     message_id = message.message_id
 
@@ -133,7 +135,7 @@ async def url_determination(message: types.Message, matches: typing.List[str]):
                         "message_id": message_id,
                         "file_name": file_name
                     }
-                    await bot.send_message(chat_id=int(HOST_ID), text=f'{to_send}')
+                    await bot.send_message(chat_id=HOST_ID, text=f'{to_send}')
         except IndexError:
             await bot.edit_message_text(
                 chat_id=chat_id, message_id=message.message_id + 1, text=LINK_NOT_FOUND, parse_mode=ParseMode.HTML
@@ -141,8 +143,5 @@ async def url_determination(message: types.Message, matches: typing.List[str]):
 
 
 if __name__ == '__main__':
-    from aiogram import executor
-    import filters
-
     filters.setup(dp)
     executor.start_polling(dp, skip_updates=True)

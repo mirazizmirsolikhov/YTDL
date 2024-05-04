@@ -1,11 +1,9 @@
-import os
 import sqlite3
 from typing import List, Tuple
 
-from dotenv import load_dotenv
+from config import Config
 
-load_dotenv()
-ADMIN_ID = os.getenv('ADMIN_ID')
+ADMIN_ID = Config.ADMIN_ID
 
 
 class Database:
