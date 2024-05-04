@@ -2,12 +2,12 @@ import typing
 from ast import literal_eval
 from logging import INFO, basicConfig
 
-from aiogram import Bot, Dispatcher, types, executor
+from aiogram import Bot, Dispatcher, types, executor, filters
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from aiogram.types import ParseMode
 from aiogram.utils.exceptions import BotBlocked
 
-import filters
+import filters as custom_filters
 from captions import *
 from config import Config
 from database import Database
@@ -95,7 +95,7 @@ async def host_text(message: types.Message) -> None:
     )
 
 
-@dp.message_handler(filters.IsCorrectLink())
+@dp.message_handler(custom_filters.IsCorrectLink())
 async def url_determination(message: types.Message, matches: typing.List[str]) -> None:
     """
     Validates urls using regex.
@@ -143,5 +143,5 @@ async def url_determination(message: types.Message, matches: typing.List[str]) -
 
 
 if __name__ == '__main__':
-    filters.setup(dp)
+    custom_filters.setup(dp)
     executor.start_polling(dp, skip_updates=True)
