@@ -1,9 +1,9 @@
 import sqlite3
 from typing import List, Tuple
 
-from config import Config
+from config import settings
 
-ADMIN_ID = Config.ADMIN_ID
+ADMIN_ID = settings.admin_id
 
 
 class Database:

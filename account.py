@@ -6,17 +6,17 @@ from pyrogram import Client, filters, types
 from pytube import YouTube
 from pytube.innertube import _default_clients
 
-from config import Config
+from config import settings
 from database import Database
 
 _default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
 
-BOT_ID = Config.BOT_ID
-SESSION_NAME = Config.SESSION_NAME
-API_ID = Config.API_ID
-API_HASH = Config.API_HASH
-DATABASE_NAME = Config.DATABASE_NAME
-DOWNLOADING_DIRECTORY = Config.DOWNLOADING_DIRECTORY
+BOT_ID = settings.bot_id
+SESSION_NAME = settings.session_name
+API_ID = settings.api_id
+API_HASH = settings.api_hash
+DATABASE_NAME = settings.database_name
+DOWNLOADING_DIRECTORY = settings.downloading_directory
 
 app = Client(
     name=SESSION_NAME,

@@ -9,12 +9,12 @@ from aiogram.utils.exceptions import BotBlocked
 
 import filters as custom_filters
 from captions import *
-from config import Config
+from config import settings
 from database import Database
 
-TOKEN = Config.TOKEN
-HOST_ID = Config.HOST_ID
-DATABASE_NAME = Config.DATABASE_NAME
+TOKEN = settings.token
+HOST_ID = settings.host_id
+DATABASE_NAME = settings.database_name
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot=bot)
