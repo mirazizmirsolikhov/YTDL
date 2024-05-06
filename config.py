@@ -29,14 +29,24 @@ class Config:
         self.downloading_directory = downloading_directory
 
 
+def get_env_variable(var: str, default: str | None = None):
+    env = getenv(var)
+
+    if env is None:
+        if default is None:
+            raise ValueError(f"Missing environment variable: {var}")
+        return default
+    return env
+
+
 settings = Config(
-    admin_id=int(getenv('ADMIN_ID')),
-    token=getenv('TOKEN'),
-    bot_id=int(getenv('BOT_ID')),
-    host_id=int(getenv('HOST_ID')),
-    api_id=int(getenv('API_ID')),
-    api_hash=getenv('API_HASH'),
-    database_name=getenv('DATABASE_NAME', default='users.db'),
-    session_name=getenv('SESSION_NAME', default='my_account'),
-    downloading_directory=getenv('DOWNLOADING_DIRECTORY', default='downloads'),
+    admin_id=int(get_env_variable(var='ADMIN_ID')),
+    token=get_env_variable(var='TOKEN'),
+    bot_id=int(get_env_variable(var='BOT_ID')),
+    host_id=int(get_env_variable(var='HOST_ID')),
+    api_id=int(get_env_variable(var='API_ID')),
+    api_hash=get_env_variable(var='API_HASH'),
+    database_name=get_env_variable(var='DATABASE_NAME', default='users.db'),
+    session_name=get_env_variable(var='SESSION_NAME', default='my_account'),
+    downloading_directory=get_env_variable(var='DOWNLOADING_DIRECTORY', default='downloads'),
 )
