@@ -1,6 +1,6 @@
-import typing
 from ast import literal_eval
 from logging import INFO, basicConfig
+from typing import Union, List, Tuple, Dict
 
 from aiogram import Bot, Dispatcher, types, executor, filters
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
@@ -12,13 +12,13 @@ from captions import *
 from config import settings
 from database import Database
 
-TOKEN = settings.token
-HOST_ID = settings.host_id
-DATABASE_NAME = settings.database_name
+TOKEN: str = settings.token
+HOST_ID: int = settings.host_id
+DATABASE_NAME: str = settings.database_name
 
-bot = Bot(token=TOKEN)
-dp = Dispatcher(bot=bot)
-db = Database(DATABASE_NAME)
+bot: Bot = Bot(token=TOKEN)
+dp: Dispatcher = Dispatcher(bot=bot)
+db: Database = Database(DATABASE_NAME)
 
 basicConfig(level=INFO)
 dp.middleware.setup(LoggingMiddleware())
@@ -30,9 +30,9 @@ async def on_start(message: types.Message) -> None:
     Registers user if one does not exist in database.
     """
 
-    user_id = message.from_user.id
-    first_name = message.from_user.first_name
-    username = message.from_user.username
+    user_id: int = message.from_user.id
+    first_name: str = message.from_user.first_name
+    username: Union[str, None] = message.from_user.username
 
     if message.chat.type == 'private':
         if not db.user_exists(user_id):
@@ -49,13 +49,13 @@ async def admin_inform(message: types.Message) -> None:
     Admin status required.
     """
 
-    user_id = message.from_user.id
+    user_id: int = message.from_user.id
 
     if message.chat.type == 'private':
         if 0 in db.is_admin(user_id):
             pass
         else:
-            users = db.get_users()
+            users: List[Tuple[int, int]] = db.get_users()
             for i in users:
                 try:
                     await bot.send_message(chat_id=i[0], text=message.text.split(" ", 1)[1])
@@ -71,8 +71,8 @@ async def host_video(message: types.Message) -> None:
     Accepts video from host account.
     """
 
-    file_id = message.video.file_id
-    json_data = literal_eval(message.caption)
+    file_id: str = message.video.file_id
+    json_data: Dict[str, Union[str, int]] = literal_eval(message.caption)
 
     try:
         await bot.send_video(chat_id=json_data['id'], video=file_id, caption=VIDEO_CAPTION, parse_mode=ParseMode.HTML)
@@ -88,7 +88,7 @@ async def host_text(message: types.Message) -> None:
     Sends an error message to user in case any error occurs.
     """
 
-    json_data = literal_eval(message.text)
+    json_data: Dict[str, Union[str, int]] = literal_eval(message.text)
     await bot.edit_message_text(
         chat_id=json_data['id'], message_id=json_data['message_id'] + 1, parse_mode=ParseMode.HTML,
         text=LINK_NOT_FOUND
@@ -96,19 +96,19 @@ async def host_text(message: types.Message) -> None:
 
 
 @dp.message_handler(custom_filters.IsCorrectLink())
-async def url_determination(message: types.Message, matches: typing.List[str]) -> None:
+async def url_determination(message: types.Message, matches: List[str]) -> None:
     """
     Validates urls using regex.
     """
 
-    chat_id = message.chat.id
-    message_id = message.message_id
+    chat_id: int = message.chat.id
+    message_id: int = message.message_id
 
-    first_name = message.from_user.first_name
-    username = message.from_user.username
+    first_name: str = message.from_user.first_name
+    username: str = message.from_user.username
     db.update_user(user_id=chat_id, first_name=first_name, username=username, is_active=1)
 
-    status = db.see_status(chat_id)
+    status: Tuple[int] = db.see_status(chat_id)
 
     if 1 in status:
         await bot.send_message(chat_id=chat_id, text=WAIT, parse_mode=ParseMode.HTML)
@@ -116,7 +116,7 @@ async def url_determination(message: types.Message, matches: typing.List[str]) -
         try:
             await bot.send_message(chat_id=chat_id, text=DOWNLOADING_STARTED, parse_mode=ParseMode.HTML)
 
-            exists = db.file_exists(url=matches[0])
+            exists: Tuple[str] = db.file_exists(url=matches[0])
             if exists is not None:
                 await bot.send_video(
                     chat_id=chat_id, video=exists[0], caption=VIDEO_CAPTION, parse_mode=ParseMode.HTML
@@ -126,10 +126,10 @@ async def url_determination(message: types.Message, matches: typing.List[str]) -
                 if len(matches) > 1:
                     await bot.send_message(chat_id=chat_id, parse_mode=ParseMode.HTML, text=MULTIPLE_LINKS)
                 else:
-                    file_name = matches[0]
-                    url = f'https://www.youtube.com/watch?v={file_name}'
+                    file_name: str = matches[0]
+                    url: str = f'https://www.youtube.com/watch?v={file_name}'
 
-                    to_send = {
+                    to_send: Dict[str, Union[str, int]] = {
                         "url": url,
                         "id": chat_id,
                         "message_id": message_id,

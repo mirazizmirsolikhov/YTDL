@@ -3,11 +3,11 @@ from typing import List, Tuple
 
 from config import settings
 
-ADMIN_ID = settings.admin_id
+ADMIN_ID: int = settings.admin_id
 
 
 class Database:
-    def __init__(self, db_file: str):
+    def __init__(self, db_file: str) -> None:
         self.connection = sqlite3.connect(db_file)
         self.cursor = self.connection.cursor()
         self.create_tables()
@@ -105,7 +105,7 @@ class Database:
             )
             return result
 
-    def get_users(self) -> List[tuple]:
+    def get_users(self) -> List[Tuple[int, int]]:
         """
         Lists all users.
         """
