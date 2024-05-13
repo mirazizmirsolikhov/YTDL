@@ -1,4 +1,5 @@
 aiogram==2.25.1
+pydantic
 pydantic-settings
 Pyrogram
 pytube
