@@ -5,6 +5,7 @@ from urllib.error import HTTPError
 
 from pyrogram import Client, filters, types
 from pytube import YouTube, Stream
+from pytube.exceptions import VideoUnavailable
 from pytube.innertube import _default_clients
 
 from config import settings
@@ -58,7 +59,7 @@ async def download(client: Client, message: types.Message) -> None:
         remove(f'{DOWNLOADING_DIRECTORY}/{filename}')
 
         db.set_status(user_id=user_id, status=0)
-    except (HTTPError, ValueError):
+    except (HTTPError, ValueError, VideoUnavailable):
         await app.send_message(chat_id=BOT_ID, text=message.text)
 
         db.set_status(user_id=user_id, status=0)
