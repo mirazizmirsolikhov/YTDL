@@ -63,7 +63,8 @@ async def download(client: Client, message: types.Message) -> None:
         remove(f'{DOWNLOADING_DIRECTORY}/{filename}')
 
         db.set_status(user_id=user_id, status=0)
-    except (HTTPError, ValueError, VideoUnavailable):
+    except (HTTPError, ValueError, VideoUnavailable) as e:
+        print(str(e))
         await app.send_message(chat_id=BOT_ID, text=message.text)
 
         db.set_status(user_id=user_id, status=0)
