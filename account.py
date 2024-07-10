@@ -10,6 +10,7 @@ from pytube.innertube import _default_clients
 
 from config import settings
 from database import Database
+from utils import load_proxies
 
 _default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
 
@@ -44,7 +45,10 @@ async def download(client: Client, message: types.Message) -> None:
     db.set_status(user_id=user_id, status=1)
 
     try:
-        yt: YouTube = YouTube(json_data['url'], use_oauth=True, allow_oauth_cache=True)
+        if settings.use_proxies:
+            yt: YouTube = YouTube(json_data['url'], use_oauth=True, allow_oauth_cache=True, proxies=load_proxies())
+        else:
+            yt: YouTube = YouTube(json_data['url'], use_oauth=True, allow_oauth_cache=True)
         video_stream: Stream = yt.streams.get_highest_resolution()
         if video_stream.filesize_gb > 2.0:
             raise ValueError('File size is too big')

@@ -183,3 +183,5 @@ makefile
 *.db
 
 test.py
+
+proxies.json
