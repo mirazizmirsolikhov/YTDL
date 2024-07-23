@@ -1,18 +1,14 @@
+from __future__ import unicode_literals
+
 from ast import literal_eval
-from os import remove, mkdir
+from os import remove, mkdir, getcwd
 from typing import Dict, Union
-from urllib.error import HTTPError
 
 from pyrogram import Client, filters, types
-from pytube import YouTube, Stream
-from pytube.exceptions import VideoUnavailable
-from pytube.innertube import _default_clients
+from youtube_dl import YoutubeDL
 
 from config import settings
 from database import Database
-from utils import load_proxies
-
-_default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
 
 BOT_ID: int = settings.bot_id
 SESSION_NAME: str = settings.session_name
@@ -20,6 +16,7 @@ API_ID: int = settings.api_id
 API_HASH: str = settings.api_hash
 DATABASE_NAME: str = settings.database_name
 DOWNLOADING_DIRECTORY: str = settings.downloading_directory
+MINIMAL_RESOLUTION: str = settings.minimal_resolution
 
 app: Client = Client(
     name=SESSION_NAME,
@@ -45,16 +42,22 @@ async def download(client: Client, message: types.Message) -> None:
     db.set_status(user_id=user_id, status=1)
 
     try:
-        if settings.use_proxies:
-            yt: YouTube = YouTube(json_data['url'], use_oauth=True, allow_oauth_cache=True, proxies=load_proxies())
-        else:
-            yt: YouTube = YouTube(json_data['url'], use_oauth=True, allow_oauth_cache=True)
-        video_stream: Stream = yt.streams.get_highest_resolution()
-        if video_stream.filesize_gb > 2.0:
-            raise ValueError('File size is too big')
-        filename: str = f'{json_data["file_name"]}.mp4'
+        ytdl = YoutubeDL()
+        info = ytdl.extract_info(json_data['url'], download=False)
+        formats = info['formats']
+        for vd in formats:
+            if vd['ext'] == 'mp4' and vd['height'] == int(MINIMAL_RESOLUTION):
+                if vd['filesize'] * 0.000001 > 2000:
+                    raise ValueError('File size is too big')
 
-        video_stream.download(output_path=DOWNLOADING_DIRECTORY, filename=filename)
+        filename: str = f'{json_data["file_name"]}.mp4'
+        ydl_opts = {
+            'format': f'mp4[height>={MINIMAL_RESOLUTION}]+[ext=mp4]',
+            'outtmpl': f'{getcwd()}/{DOWNLOADING_DIRECTORY}/{filename}',
+        }
+        with YoutubeDL(ydl_opts) as ydl:
+            ydl.download([json_data['url']])
+
         await app.send_video(
             chat_id=BOT_ID,
             video=open(f'{DOWNLOADING_DIRECTORY}/{filename}', 'rb'),
@@ -63,7 +66,7 @@ async def download(client: Client, message: types.Message) -> None:
         remove(f'{DOWNLOADING_DIRECTORY}/{filename}')
 
         db.set_status(user_id=user_id, status=0)
-    except (HTTPError, ValueError, VideoUnavailable) as e:
+    except Exception as e:
         print(str(e))
         await app.send_message(chat_id=BOT_ID, text=message.text)
 

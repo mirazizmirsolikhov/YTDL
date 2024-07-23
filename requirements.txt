@@ -1,6 +1,7 @@
 aiogram==2.25.1
+wheel
 pydantic
 pydantic-settings
 Pyrogram
-pytube
 TgCrypto
+youtube-dl @ git+https://github.com/ytdl-org/ytdl-nightly.git

@@ -11,4 +11,4 @@ class Settings(BaseSettings):
     database_name: str = 'users.db'
     session_name: str = 'my_account'
     downloading_directory: str = 'downloads'
-    use_proxies: bool = False
+    minimal_resolution: str = '720'
