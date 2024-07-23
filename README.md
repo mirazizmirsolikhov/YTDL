@@ -1,7 +1,7 @@
 # YTDL - YouTube Downloader
 
-Telegram bot based on Aiogram, Pyrogram and PyTube that allows to download any kind of videos from YouTube.
-Bot requires extra telegram account for bypassing file limits for bots and one Google account for accessing YouTube.
+Telegram bot based on Aiogram, Pyrogram and youtube-dl that allows to download any kind of videos from YouTube.
+Bot requires extra telegram account for bypassing file limits for bots.
 
 <div align="center">
 <img alt="YouTube" src="https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white"/>
@@ -23,9 +23,5 @@ You do not have to create it manually. It is formed automatically.
 - `API_HASH`: Can be obtained here - https://my.telegram.org.
 
 **There you can find an example of .env file.**
-
-## Connecting Google account
-#### First time you launch account.py you have to follow the link shown in terminal and enter the code that will also be displayed in terminal.
-#### This will allow the bot to use your Google account in order to get access to YouTube.
 
 ### Show some ❤️ and ⭐ the repo to support the project!
