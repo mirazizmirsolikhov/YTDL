@@ -10,6 +10,14 @@ Bot requires extra telegram account for bypassing file limits for bots.
 <img alt="SQLite" src="https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white"/>
 </div>
 
+## Requirements
+#### ffmpeg required for working with videos
+
+```shell
+sudo apt update && sudo apt upgrade -y
+sudo apt install ffmpeg
+```
+
 ## Creating Database
 
 You do not have to create it manually. It is formed automatically.
