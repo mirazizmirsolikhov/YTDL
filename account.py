@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from ast import literal_eval
 from os import remove, mkdir, getcwd
+from pprint import pprint
 from typing import Dict, Union
 
 from pyrogram import Client, filters, types
@@ -51,9 +52,8 @@ async def download(client: Client, message: types.Message) -> None:
                     raise ValueError('File size is too big')
 
         filename: str = f'{json_data["file_name"]}.mp4'
-        print(f'\n{filename}\n')
         ydl_opts = {
-            'format': f'mp4[width={MINIMAL_RESOLUTION}]+[ext=mp4]',
+            'format': f'mp4[format_id=398]+[ext=mp4]',
             'outtmpl': f'{getcwd()}/{DOWNLOADING_DIRECTORY}/{filename}',
         }
         with YoutubeDL(ydl_opts) as ydl:
