@@ -5,4 +5,4 @@ from utils.db import Database
 
 bot = Bot(token=config.token)
 dp = Dispatcher(bot)
-db = Database(config.database_name)
+db = Database(f'../{config.database_name}')
