@@ -1,1 +1,1 @@
-from .load_proxies import load_proxies
+from . import db
