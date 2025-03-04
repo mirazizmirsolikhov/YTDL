@@ -1,7 +1,4 @@
-import os
-
-from pydantic_settings import BaseSettings, SettingsConfigDict
-from loader import DOTENV
+from pydantic_settings import BaseSettings
 
 
 class Config(BaseSettings):
@@ -16,7 +13,5 @@ class Config(BaseSettings):
     downloading_directory: str = 'downloads'
     minimal_resolution: str = '720'
 
-    model_config = SettingsConfigDict(env_file=DOTENV)
 
-
-config = Config()
+config = Config(_env_file='../.env')
