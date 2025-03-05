@@ -3,12 +3,12 @@ from typing import List, Tuple, Dict, Union
 from aiogram import types
 from aiogram.utils.markdown import hbold, hlink
 
-from bot.filters import IsCorrectLink
+from bot.filters import IsCorrectLink, IsHost
 from config import config
 from loader import dp, db, bot
 
 
-@dp.message_handler(IsCorrectLink())
+@dp.message_handler(IsCorrectLink(), ~IsHost())
 async def url_determination(message: types.Message, matches: List[str]) -> None:
     """
     Validates urls using regex.
