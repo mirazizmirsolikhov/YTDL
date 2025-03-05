@@ -1,13 +1,9 @@
-from os import mkdir
+import os
 
 from config import config
 from loader import app
 
-DOWNLOADING_DIRECTORY: str = config.downloading_directory
-
-try:
-    mkdir(DOWNLOADING_DIRECTORY)
-except FileExistsError:
-    pass
+os.makedirs(config.downloading_directory, exist_ok=True)
+os.makedirs(config.session_folder, exist_ok=True)
 
 app.run()
