@@ -175,13 +175,9 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python
 
-makefile
-
-*.session
-*.session-journal
+userbot/downloads/
+userbot/sessions/
 
 *.db
 
 test.py
-
-proxies.json
