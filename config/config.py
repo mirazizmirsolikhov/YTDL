@@ -10,7 +10,7 @@ class Config(BaseSettings):
     api_hash: str
     database_name: str = 'users.db'
     session_name: str = 'my_account'
-    downloading_directory: str = 'downloads'
+    downloading_directory: str = '../downloads'
     minimal_resolution: str = '720'
 
 
