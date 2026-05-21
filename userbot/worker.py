@@ -37,12 +37,35 @@ def _download(task: DownloadTask) -> None:
         ydl.download([task.url])
 
 
+def _cleanup(video_id: str) -> None:
+    """Remove the output file and any leftover yt-dlp fragment files."""
+
+    for leftover in config.downloads_path.glob(f'{video_id}.*'):
+        try:
+            leftover.unlink()
+        except OSError:
+            logger.warning('Could not remove leftover file %s', leftover)
+
+
 async def _process(task: DownloadTask) -> None:
-    """Download one video and hand it to the bot, or report a failure."""
+    """Download one video and hand it to the bot, or report a failure.
+
+    Download failures and send failures are reported separately, so the user
+    sees an accurate message — a video that downloaded but failed to upload is
+    not the same as one that could not be downloaded at all.
+    """
 
     path = config.downloads_path / f'{task.video_id}.mp4'
+    loop = asyncio.get_running_loop()
     try:
-        await asyncio.get_running_loop().run_in_executor(None, _download, task)
+        try:
+            await loop.run_in_executor(None, _download, task)
+        except DownloadError as error:
+            logger.warning('Download failed for %s: %s', task.url, error)
+            await result_queue.push(
+                DownloadResult(task=task, success=False, error=captions.VIDEO_UNAVAILABLE)
+            )
+            return
 
         size_mb: float = os.path.getsize(path) / (1024 * 1024)
         if size_mb > MAX_FILE_SIZE_MB:
@@ -51,24 +74,24 @@ async def _process(task: DownloadTask) -> None:
             )
             return
 
-        # The video must travel through Telegram so the bot can obtain its own
-        # file_id; the task rides along in the caption as JSON.
-        await app.send_video(
-            chat_id=BOT_ID, video=str(path), caption=task.model_dump_json()
-        )
-    except DownloadError as error:
-        logger.warning('Download failed for %s: %s', task.url, error)
-        await result_queue.push(
-            DownloadResult(task=task, success=False, error=captions.VIDEO_UNAVAILABLE)
-        )
+        try:
+            # The video must travel through Telegram so the bot can obtain its
+            # own file_id; the task rides along in the caption as JSON.
+            await app.send_video(
+                chat_id=BOT_ID, video=str(path), caption=task.model_dump_json()
+            )
+        except Exception:
+            logger.exception('Failed to send video for %s', task.url)
+            await result_queue.push(
+                DownloadResult(task=task, success=False, error=captions.SEND_FAILED)
+            )
     except Exception:
         logger.exception('Unexpected error while processing %s', task.url)
         await result_queue.push(
             DownloadResult(task=task, success=False, error=captions.DOWNLOAD_FAILED)
         )
     finally:
-        if path.exists():
-            os.remove(path)
+        _cleanup(task.video_id)
 
 
 async def run_worker() -> None:
