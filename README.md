@@ -1,6 +1,6 @@
 # YTDL - YouTube Downloader
 
-Telegram bot based on Aiogram, Pyrogram and youtube-dl that allows to download any kind of videos from YouTube.
+Telegram bot based on Aiogram, Pyrogram and yt-dlp that allows to download any kind of videos from YouTube.
 Bot requires an extra Telegram account for bypassing file limits for bots.
 
 <div style="text-align: center;">
@@ -22,7 +22,7 @@ Redis carries the task queue, the result queue, per-user status flags and the `f
 
 ## Requirements
 
-- **ffmpeg** — required by youtube-dl for muxing video/audio.
+- **ffmpeg** — required by yt-dlp for muxing video/audio.
 - **Redis** — message transport between the two processes.
 - **[uv](https://docs.astral.sh/uv/)** — dependency manager (replaces pip).
 
