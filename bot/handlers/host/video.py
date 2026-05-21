@@ -1,5 +1,6 @@
-from aiogram import types
-from aiogram.utils.exceptions import BotBlocked
+from aiogram import F, types
+from aiogram.enums import ContentType
+from aiogram.exceptions import TelegramForbiddenError
 
 import captions
 from bot.filters import IsHost
@@ -7,7 +8,7 @@ from loader import bot, db, dp, file_cache, status_store
 from utils.transport import DownloadTask
 
 
-@dp.message_handler(IsHost(), content_types=types.ContentTypes.VIDEO)
+@dp.message(IsHost(), F.content_type == ContentType.VIDEO)
 async def on_host_video(message: types.Message) -> None:
     """Receive a successfully downloaded video from the host account.
 
@@ -28,10 +29,9 @@ async def on_host_video(message: types.Message) -> None:
             chat_id=task.chat_id,
             video=file_id,
             caption=captions.VIDEO_CAPTION,
-            parse_mode=types.ParseMode.HTML,
         )
         db.increase_nod(user_id=task.user_id)
-    except BotBlocked:
+    except TelegramForbiddenError:
         db.set_active(user_id=task.user_id, is_active=0)
     finally:
         await status_store.clear(task.user_id)

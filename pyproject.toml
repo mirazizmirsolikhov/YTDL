@@ -3,12 +3,12 @@ name = "ytdl"
 version = "0.1.0"
 description = "Telegram bot for downloading YouTube / YouTube Shorts videos"
 readme = "README.md"
-# Pinned to 3.11: aiogram 2.25.1 requires aiohttp 3.8.x, which has no wheels
-# for 3.12+ and fails to build there. The Docker image uses python:3.11-slim.
-requires-python = ">=3.11,<3.12"
+# The Docker image uses python:3.11-slim; aiogram 3 also supports newer
+# Python, so only a lower bound is enforced.
+requires-python = ">=3.11"
 license = { file = "LICENSE" }
 dependencies = [
-    "aiogram==2.25.1",
+    "aiogram>=3.7,<4",
     "pydantic",
     "pydantic-settings",
     "kurigram",

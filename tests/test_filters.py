@@ -6,7 +6,7 @@ from bot.filters.link import IsCorrectLink
 async def _check(text: str):
     """Run the link filter against a message carrying the given text."""
 
-    return await IsCorrectLink().check(SimpleNamespace(text=text))
+    return await IsCorrectLink()(SimpleNamespace(text=text))
 
 
 async def test_plain_watch_url():
@@ -26,6 +26,12 @@ async def test_shorts_url():
 
 async def test_text_without_link():
     assert await _check('just a plain message') is False
+
+
+async def test_message_without_text():
+    """A non-text message (e.g. a video) has text=None and must not crash."""
+
+    assert await _check(None) is False
 
 
 async def test_multiple_links_are_all_matched():

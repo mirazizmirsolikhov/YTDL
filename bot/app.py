@@ -7,24 +7,24 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import asyncio
 from logging import INFO, basicConfig
 
-from aiogram import Dispatcher, executor
-from aiogram.contrib.middlewares.logging import LoggingMiddleware
-
-import handlers
-from bot import filters
-from loader import dp
+import handlers  # noqa: F401 — importing registers the handlers on `dp`
+from loader import bot, dp
 from result_listener import listen_results
 
 basicConfig(level=INFO)
-dp.middleware.setup(LoggingMiddleware())
-filters.setup(dp)
 
 
-async def on_startup(_: Dispatcher) -> None:
-    """Start the background task that delivers download failures to users."""
+async def main() -> None:
+    """Start the result listener and begin long-polling."""
 
-    asyncio.create_task(listen_results())
+    listener = asyncio.create_task(listen_results())
+    # Drop updates accumulated while the bot was down (old `skip_updates`).
+    await bot.delete_webhook(drop_pending_updates=True)
+    try:
+        await dp.start_polling(bot)
+    finally:
+        listener.cancel()
 
 
 if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
+    asyncio.run(main())
