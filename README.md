@@ -11,6 +11,8 @@ Bot requires an extra Telegram account for bypassing file limits for bots.
     <img alt="SQLite" src="https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white"/>
 </div>
 
+[![Deploy](https://github.com/mirazizmirsolikhov/YTDL/actions/workflows/deploy.yml/badge.svg)](https://github.com/mirazizmirsolikhov/YTDL/actions/workflows/deploy.yml)
+
 ## Architecture
 
 The project runs as **two processes** that coordinate through **Redis**:
