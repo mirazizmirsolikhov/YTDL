@@ -18,6 +18,9 @@ dependencies = [
     # EJS challenge-solver scripts for YouTube; run by deno (see Dockerfile).
     # Bundling the package avoids fetching remote components at runtime.
     "yt-dlp-ejs",
+    # yt-dlp plugin that fetches YouTube PO tokens from the bgutil-provider
+    # service (see docker-compose.yml) — keeps downloads working on VPS IPs.
+    "bgutil-ytdlp-pot-provider>=1.3.1",
 ]
 
 [tool.uv]

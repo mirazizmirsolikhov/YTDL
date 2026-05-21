@@ -48,9 +48,14 @@ See `README.md` for setup and `REFACTORING.md` for architecture history.
   session with `docker compose run --rm userbot`, or copy an existing session
   file in. Never run the same session on two machines at once.
 - **YouTube on a VPS** — datacenter IPs hit "Sign in to confirm you're not a
-  bot". Fix: provide `data/cookies.txt` (Netscape format, exported from a
-  logged-in browser). yt-dlp also needs a JS runtime — `deno` (in the Docker
-  image) plus the `yt-dlp-ejs` package.
+  bot". Primary fix: the `pot-provider` compose service (image
+  `brainicism/bgutil-ytdlp-pot-provider`) mints PO tokens, and the
+  `bgutil-ytdlp-pot-provider` yt-dlp plugin feeds them to yt-dlp via
+  `POT_PROVIDER_URL`. `data/cookies.txt` (Netscape format) is an optional
+  extra auth layer — with PO tokens it expires far less often. yt-dlp also
+  needs a JS runtime — `deno` (in the Docker image) plus `yt-dlp-ejs`. Keep
+  the pinned `pot-provider` image tag in sync with the plugin version in
+  `pyproject.toml`.
 - **Dependency management is uv** — `pyproject.toml` + `uv.lock`, no
   `requirements.txt` or pip.
 - Entry points (`bot/app.py`, `userbot/userbot.py`) bootstrap the project root
@@ -61,8 +66,9 @@ See `README.md` for setup and `REFACTORING.md` for architecture history.
 ## Deployment
 
 Runs on a VPS via `docker compose` (from the `main` branch), with
-`restart: unless-stopped`. The bot and userbot share `./data`; YouTube cookies
-expire periodically and need re-exporting into `data/cookies.txt`.
+`restart: unless-stopped`. The bot and userbot share `./data`. The
+`pot-provider` service handles YouTube's bot check; `data/cookies.txt`, if
+used, still expires eventually and can be re-exported.
 
 Auto-deploy: a push to `main` triggers `.github/workflows/deploy.yml` — it runs
 `pytest`, then SSHes into the VPS and runs `deploy.sh`. `deploy.sh` pulls

@@ -39,6 +39,15 @@ def _download(task: DownloadTask) -> None:
     if cookies is not None and cookies.exists():
         ydl_opts['cookiefile'] = str(cookies)
 
+    # Route PO-token requests through the bgutil provider service. PO tokens
+    # keep YouTube downloads working on datacenter IPs and greatly reduce how
+    # often cookies need re-exporting; the bgutil-ytdlp-pot-provider plugin
+    # (installed in this env) is picked up by yt-dlp automatically.
+    if config.pot_provider_url:
+        ydl_opts['extractor_args'] = {
+            'youtubepot-bgutilhttp': {'base_url': [config.pot_provider_url]},
+        }
+
     with YoutubeDL(ydl_opts) as ydl:
         ydl.download([task.url])
 
