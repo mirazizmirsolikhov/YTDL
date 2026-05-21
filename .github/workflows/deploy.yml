@@ -1,0 +1,42 @@
+name: Deploy
+
+# Push в main → прогон тестов → SSH-деплой на VPS.
+# Можно запустить и вручную через вкладку Actions (workflow_dispatch).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Два деплоя не должны идти одновременно — второй ждёт первого.
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - name: Sync dependencies
+        run: uv sync --frozen
+      - name: Run tests
+        run: uv run pytest
+
+  deploy:
+    needs: test            # деплой только если тесты прошли
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            cd ${{ secrets.VPS_PROJECT_DIR }}
+            ./deploy.sh

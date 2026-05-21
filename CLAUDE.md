@@ -55,6 +55,12 @@ See `README.md` for setup and `REFACTORING.md` for architecture history.
 
 ## Deployment
 
-Runs on a VPS via `docker compose` (from the `dev` branch), with
+Runs on a VPS via `docker compose` (from the `main` branch), with
 `restart: unless-stopped`. The bot and userbot share `./data`; YouTube cookies
 expire periodically and need re-exporting into `data/cookies.txt`.
+
+Auto-deploy: a push to `main` triggers `.github/workflows/deploy.yml` — it runs
+`pytest`, then SSHes into the VPS and runs `deploy.sh`. `deploy.sh` pulls
+`origin/main`, rebuilds, restarts, and rolls back to the previous commit if the
+build fails or a container does not come up. It is also safe to run by hand on
+the VPS.
