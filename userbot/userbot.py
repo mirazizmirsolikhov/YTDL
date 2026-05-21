@@ -1,3 +1,9 @@
+import sys
+from pathlib import Path
+
+# Ensure the project root is importable when run as a script from this folder.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 import asyncio
 import logging
 import os
