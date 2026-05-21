@@ -25,3 +25,15 @@ youtube-dl = { git = "https://github.com/ytdl-org/ytdl-nightly.git" }
 # This is an application, not an installable library — only its dependencies
 # need to be synced, the project itself is run via scripts.
 package = false
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "fakeredis",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["."]
+testpaths = ["tests"]
