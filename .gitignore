@@ -175,8 +175,13 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python
 
-userbot/downloads/
-userbot/sessions/
+# Pyrogram session files — contain account auth keys, never commit.
+sessions/
+*.session
+*.session-journal
+
+# Runtime data directory (Docker volume mount target).
+data/
 
 *.db
 
