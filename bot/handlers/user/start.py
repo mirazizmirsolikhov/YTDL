@@ -1,30 +1,15 @@
-from typing import Union
-
 from aiogram import types
-from aiogram.utils.markdown import hbold
 
-from loader import dp, db
+import captions
+from bot.services import user_service
+from loader import dp
 
 
 @dp.message_handler(commands=['start'])
 async def on_start(message: types.Message) -> None:
-    """
-    Registers user if one does not exist in database.
-    """
-
-    user_id: int = message.from_user.id
-    first_name: str = message.from_user.first_name
-    username: Union[str, None] = message.from_user.username
+    """Register the user (in private chats) and greet them."""
 
     if message.chat.type == 'private':
-        if not db.user_exists(user_id):
-            db.create_user(user_id=user_id, first_name=first_name, username=username)
-        db.update_user(user_id=user_id, first_name=first_name, username=username, is_active=1)
+        user_service.register_or_update(message.from_user)
 
-    await message.reply(
-        text=f"""👋 {hbold('Вас приветствует бот для загрузки видео.')}
-\nИмеется возможность загрузки из следующих источников:
-❤ {hbold('YouTube')}
-❤ {hbold('YouTube Shorts')}""",
-        parse_mode=types.ParseMode.HTML
-    )
+    await message.reply(captions.START_MESSAGE, parse_mode=types.ParseMode.HTML)
