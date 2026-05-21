@@ -8,6 +8,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # uv — fast dependency manager (replaces pip).
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
+# deno — JavaScript runtime yt-dlp uses for YouTube extraction.
+COPY --from=denoland/deno:bin /deno /usr/local/bin/deno
+
 WORKDIR /app
 
 # Install dependencies from the lockfile in a cached layer.
