@@ -11,17 +11,14 @@ services:
     command: python app.py
     env_file: .env
     environment:
-      # Override host so the service reaches Redis over the compose network.
+      # Override so the service reaches Redis over the compose network.
       REDIS_HOST: redis
-      # Keep persistent state under /app/data so it survives container restarts.
-      DATABASE_NAME: data/users.db
-      SESSION_FOLDER: data/sessions
-      DOWNLOADING_DIRECTORY: data/downloads
     depends_on:
       - redis
     restart: unless-stopped
     volumes:
-      - app-data:/app/data
+      # Shared SQLite database (users + file_id cache backup).
+      - ./users.db:/app/users.db
 
   userbot:
     build: .
@@ -30,15 +27,15 @@ services:
     env_file: .env
     environment:
       REDIS_HOST: redis
-      DATABASE_NAME: data/users.db
-      SESSION_FOLDER: data/sessions
-      DOWNLOADING_DIRECTORY: data/downloads
     depends_on:
       - redis
     restart: unless-stopped
     volumes:
-      - app-data:/app/data
+      - ./users.db:/app/users.db
+      # Pyrogram session — reuse the host login so no re-auth is needed.
+      - ./sessions:/app/sessions
+      # Downloaded videos are temporary; kept off the container layer.
+      - ./downloads:/app/downloads
 
 volumes:
   redis-data:
-  app-data:
