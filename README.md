@@ -49,10 +49,14 @@ The SQLite database is created automatically on first run.
 
 ### Docker Compose (recommended)
 
-Brings up `redis`, `bot` and `userbot` together:
+All persistent state (database, session, downloads) lives in `./data`, created
+automatically. Before the first run, place the host account's Pyrogram session
+there so the userbot starts without an interactive login:
 
 ```shell
-docker compose up --build
+mkdir -p data/sessions
+# copy my_account.session into data/sessions/
+docker compose up -d --build
 ```
 
 ### Manually
