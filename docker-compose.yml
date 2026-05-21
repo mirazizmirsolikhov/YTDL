@@ -9,6 +9,10 @@ x-app-env: &app-env
   # Optional: drop a Netscape-format cookies.txt here to bypass YouTube's
   # bot check on VPS IPs. If the file is absent, yt-dlp runs without it.
   COOKIES_FILE: data/cookies.txt
+  # PO-token provider — yt-dlp fetches YouTube proof-of-origin tokens from
+  # the bgutil-provider service, which keeps downloads working on VPS IPs
+  # without constant cookie re-exporting. Empty value disables it.
+  POT_PROVIDER_URL: http://pot-provider:4416
 
 services:
   redis:
@@ -16,6 +20,13 @@ services:
     restart: unless-stopped
     volumes:
       - redis-data:/data
+
+  # Mints YouTube PO tokens for yt-dlp. Pinned to match the
+  # bgutil-ytdlp-pot-provider plugin version in pyproject.toml.
+  pot-provider:
+    image: brainicism/bgutil-ytdlp-pot-provider:1.3.1
+    init: true
+    restart: unless-stopped
 
   bot:
     build: .
@@ -37,6 +48,7 @@ services:
     environment: *app-env
     depends_on:
       - redis
+      - pot-provider
     restart: unless-stopped
     volumes:
       - ./data:/app/data

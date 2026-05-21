@@ -21,6 +21,9 @@ class Config(BaseSettings):
     # Optional yt-dlp cookies file (Netscape format), relative to the project
     # root. Needed when YouTube blocks the server IP and demands sign-in.
     cookies_file: str = ''
+    # Base URL of the bgutil PO-token provider. When set, yt-dlp fetches
+    # YouTube proof-of-origin tokens from it; empty disables the integration.
+    pot_provider_url: str = ''
 
     redis_host: str = 'localhost'
     redis_port: int = 6379
