@@ -14,6 +14,11 @@ class IsCorrectLink(BaseFilter):
     """
 
     async def __call__(self, message: types.Message) -> Union[bool, Dict[str, List[str]]]:
+        # aiogram 3 runs every handler's filters on every message; a video or
+        # other non-text message has `text=None`, which would crash re.findall.
+        if not message.text:
+            return False
+
         pattern1: str = r'(?:https?://)?(?:www\.)?youtube\.com/shorts/([\w\-]+)'
         pattern1_matches: List[str] = re.findall(pattern1, message.text)
 

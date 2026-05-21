@@ -28,6 +28,12 @@ async def test_text_without_link():
     assert await _check('just a plain message') is False
 
 
+async def test_message_without_text():
+    """A non-text message (e.g. a video) has text=None and must not crash."""
+
+    assert await _check(None) is False
+
+
 async def test_multiple_links_are_all_matched():
     result = await _check(
         'https://youtu.be/aaaaaaaaaaa then https://youtu.be/bbbbbbbbbbb'
