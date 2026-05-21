@@ -1,4 +1,6 @@
 from aiogram import Bot, Dispatcher
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
 from pyrogram import Client
 from redis.asyncio import Redis
 
@@ -14,8 +16,12 @@ from utils.transport import (
     StatusStore,
 )
 
-bot = Bot(token=config.token)
-dp = Dispatcher(bot)
+# parse_mode is set bot-wide, so individual send calls need not pass it.
+bot = Bot(
+    token=config.token,
+    default=DefaultBotProperties(parse_mode=ParseMode.HTML),
+)
+dp = Dispatcher()
 db = Database(str(config.database_path))
 
 app = Client(

@@ -6,7 +6,7 @@ from bot.filters.link import IsCorrectLink
 async def _check(text: str):
     """Run the link filter against a message carrying the given text."""
 
-    return await IsCorrectLink().check(SimpleNamespace(text=text))
+    return await IsCorrectLink()(SimpleNamespace(text=text))
 
 
 async def test_plain_watch_url():

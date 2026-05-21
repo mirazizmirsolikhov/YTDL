@@ -36,11 +36,11 @@ async def handle_download_request(message: types.Message, matches: List[str]) ->
     user_service.register_or_update(user)
 
     if len(matches) > 1:
-        await message.reply(captions.MULTIPLE_LINKS, parse_mode=types.ParseMode.HTML)
+        await message.reply(captions.MULTIPLE_LINKS)
         return
 
     if await status_store.is_busy(user.id):
-        await message.reply(captions.WAIT, parse_mode=types.ParseMode.HTML)
+        await message.reply(captions.WAIT)
         return
 
     video_id: str = matches[0]
@@ -51,16 +51,13 @@ async def handle_download_request(message: types.Message, matches: List[str]) ->
             chat_id=message.chat.id,
             video=cached,
             caption=captions.VIDEO_CAPTION,
-            parse_mode=types.ParseMode.HTML,
         )
         db.increase_nod(user_id=user.id)
         return
 
     # The reply's message_id is carried in the task so the worker's result can
     # be delivered to the exact message — no more guessing message_id + 1.
-    status_message: types.Message = await message.reply(
-        captions.DOWNLOADING_STARTED, parse_mode=types.ParseMode.HTML
-    )
+    status_message: types.Message = await message.reply(captions.DOWNLOADING_STARTED)
     await status_store.set_busy(user.id)
 
     task = DownloadTask(

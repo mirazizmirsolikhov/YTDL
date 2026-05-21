@@ -7,7 +7,7 @@ from bot.services import download_service
 from loader import dp
 
 
-@dp.message_handler(IsCorrectLink(), ~IsHost())
+@dp.message(IsCorrectLink(), ~IsHost())
 async def on_video_url(message: types.Message, matches: List[str]) -> None:
     """Handle a YouTube link from a regular user."""
 

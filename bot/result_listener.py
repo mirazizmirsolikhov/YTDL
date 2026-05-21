@@ -1,8 +1,6 @@
 import asyncio
 import logging
 
-from aiogram import types
-
 import captions
 from loader import bot, result_queue, status_store
 
@@ -35,7 +33,6 @@ async def listen_results() -> None:
                 chat_id=task.chat_id,
                 message_id=task.status_message_id,
                 text=result.error or captions.DOWNLOAD_FAILED,
-                parse_mode=types.ParseMode.HTML,
             )
         except Exception:
             logger.exception('Failed to deliver a result to user %s', task.user_id)

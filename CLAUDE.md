@@ -36,8 +36,13 @@ See `README.md` for setup and `REFACTORING.md` for architecture history.
 
 ## Key gotchas
 
-- **Python is pinned to 3.11** (`pyproject.toml`) — aiogram 2.25.1 needs
-  aiohttp 3.8.x, which has no wheels for 3.12+.
+- **Python** — the Docker image is `python:3.11-slim` and the venv runs 3.11.
+  `pyproject.toml` only sets a lower bound (`>=3.11`); aiogram 3 also supports
+  newer Python, so a bump is no longer blocked.
+- **The bot uses aiogram 3** — handlers are registered with `@dp.message(...)`,
+  custom filters subclass `aiogram.filters.BaseFilter` (`__call__`, not
+  `check`), and `parse_mode` is set bot-wide via `DefaultBotProperties` in
+  `loader.py` rather than per send call.
 - **Pyrogram session** — the userbot needs `data/sessions/my_account.session`.
   `docker compose up` has no TTY for the interactive first login; create the
   session with `docker compose run --rm userbot`, or copy an existing session

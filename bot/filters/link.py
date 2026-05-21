@@ -2,16 +2,18 @@ import re
 from typing import Union, Dict, List
 
 from aiogram import types
-from aiogram.dispatcher.filters import BoundFilter
+from aiogram.filters import BaseFilter
 
 
-class IsCorrectLink(BoundFilter):
+class IsCorrectLink(BaseFilter):
     """
     Checks if the YouTube link is correct.
-    """
-    key: str = 'is_correct_link'
 
-    async def check(self, message: types.Message) -> Union[bool, Dict[str, List[str]]]:
+    On a match it returns a dict; aiogram 3 merges that into the handler's
+    keyword arguments, so the matched IDs arrive as the ``matches`` parameter.
+    """
+
+    async def __call__(self, message: types.Message) -> Union[bool, Dict[str, List[str]]]:
         pattern1: str = r'(?:https?://)?(?:www\.)?youtube\.com/shorts/([\w\-]+)'
         pattern1_matches: List[str] = re.findall(pattern1, message.text)
 
