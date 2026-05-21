@@ -42,6 +42,7 @@ Copy `.env_example` to `.env` and fill it in:
 - `API_ID`: Can be obtained here - https://my.telegram.org.
 - `API_HASH`: Can be obtained here - https://my.telegram.org.
 - `REDIS_HOST` / `REDIS_PORT` / `REDIS_DB`: Redis connection (defaults: `localhost` / `6379` / `0`).
+- `COOKIES_FILE` (optional): path to a yt-dlp cookies file — see [YouTube cookies](#youtube-cookies-on-a-vps).
 
 The SQLite database is created automatically on first run.
 
@@ -58,6 +59,15 @@ mkdir -p data/sessions
 # copy my_account.session into data/sessions/
 docker compose up -d --build
 ```
+
+### YouTube cookies on a VPS
+
+YouTube blocks datacenter IPs with *"Sign in to confirm you're not a bot"*. To
+work around it, export a `cookies.txt` (Netscape format) from a browser logged
+into YouTube and place it at `data/cookies.txt`. The compose file already points
+`COOKIES_FILE` there; yt-dlp picks it up automatically, and runs without it if
+the file is absent. Prefer a throwaway YouTube account — bot-like traffic can
+get an account flagged.
 
 ### Manually
 

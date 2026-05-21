@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 from pydantic_settings import BaseSettings
 
@@ -17,6 +18,9 @@ class Config(BaseSettings):
     session_folder: str = 'sessions'
     downloading_directory: str = 'downloads'
     minimal_resolution: str = '720'
+    # Optional yt-dlp cookies file (Netscape format), relative to the project
+    # root. Needed when YouTube blocks the server IP and demands sign-in.
+    cookies_file: str = ''
 
     redis_host: str = 'localhost'
     redis_port: int = 6379
@@ -43,6 +47,12 @@ class Config(BaseSettings):
         """Absolute path to the directory for downloaded videos."""
 
         return PROJECT_ROOT / self.downloading_directory
+
+    @property
+    def cookies_path(self) -> Optional[Path]:
+        """Absolute path to the yt-dlp cookies file, or None if not configured."""
+
+        return PROJECT_ROOT / self.cookies_file if self.cookies_file else None
 
     @property
     def redis_url(self) -> str:

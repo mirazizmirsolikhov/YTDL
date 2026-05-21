@@ -33,6 +33,12 @@ def _download(task: DownloadTask) -> None:
         'noplaylist': True,
         'quiet': True,
     }
+    # Cookies let yt-dlp pass YouTube's "confirm you're not a bot" check,
+    # which is otherwise triggered on datacenter (VPS) IPs.
+    cookies = config.cookies_path
+    if cookies is not None and cookies.exists():
+        ydl_opts['cookiefile'] = str(cookies)
+
     with YoutubeDL(ydl_opts) as ydl:
         ydl.download([task.url])
 
