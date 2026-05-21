@@ -6,6 +6,9 @@ x-app-env: &app-env
   DATABASE_NAME: data/users.db
   SESSION_FOLDER: data/sessions
   DOWNLOADING_DIRECTORY: data/downloads
+  # Optional: drop a Netscape-format cookies.txt here to bypass YouTube's
+  # bot check on VPS IPs. If the file is absent, yt-dlp runs without it.
+  COOKIES_FILE: data/cookies.txt
 
 services:
   redis:
