@@ -1,0 +1,13 @@
+.git
+.gitignore
+.venv
+__pycache__
+*.py[cod]
+*.db
+.env
+sessions/
+downloads/
+data/
+userbot/sessions/
+userbot/downloads/
+REFACTORING.md

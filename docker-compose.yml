@@ -1,0 +1,44 @@
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+
+  bot:
+    build: .
+    working_dir: /app/bot
+    command: python app.py
+    env_file: .env
+    environment:
+      # Override host so the service reaches Redis over the compose network.
+      REDIS_HOST: redis
+      # Keep persistent state under /app/data so it survives container restarts.
+      DATABASE_NAME: data/users.db
+      SESSION_FOLDER: data/sessions
+      DOWNLOADING_DIRECTORY: data/downloads
+    depends_on:
+      - redis
+    restart: unless-stopped
+    volumes:
+      - app-data:/app/data
+
+  userbot:
+    build: .
+    working_dir: /app/userbot
+    command: python userbot.py
+    env_file: .env
+    environment:
+      REDIS_HOST: redis
+      DATABASE_NAME: data/users.db
+      SESSION_FOLDER: data/sessions
+      DOWNLOADING_DIRECTORY: data/downloads
+    depends_on:
+      - redis
+    restart: unless-stopped
+    volumes:
+      - app-data:/app/data
+
+volumes:
+  redis-data:
+  app-data:

@@ -27,11 +27,11 @@
 Telegram больше НЕ шина между процессами. Userbot всё ещё шлёт видеофайл боту через
 Telegram (нужен `file_id`), но координация заданий и адресация ответов — через Redis.
 
-## Этап 0 — Инфраструктура
+## Этап 0 — Инфраструктура ✅ (выполнено 2026-05-21)
 
 | #   | Задача                                                                          | Файлы |
 |-----|---------------------------------------------------------------------------------|-------|
-| 0.1 | Добавить `redis` (asyncio-клиент) в requirements                                | `requirements.txt` |
+| 0.1 | Добавить `redis` (asyncio-клиент); миграция на `pyproject.toml` + `uv.lock` (uv вместо pip) | `pyproject.toml`, `uv.lock` |
 | 0.2 | В `config.py`: `redis_host`, `redis_port`, `redis_db`, `redis_url`              | `config/config.py`, `.env_example` |
 | 0.3 | Абсолютные пути от корня проекта (убрать `../`), корень через `Path(__file__)`  | `config/config.py`, `loader.py` |
 | 0.4 | `docker-compose.yml`: сервисы `bot`, `userbot`, `redis`; volume для db/sessions | новый |
