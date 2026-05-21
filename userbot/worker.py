@@ -1,11 +1,9 @@
-from __future__ import unicode_literals
-
 import asyncio
 import logging
 import os
 
-from youtube_dl import YoutubeDL
-from youtube_dl.utils import DownloadError
+from yt_dlp import YoutubeDL
+from yt_dlp.utils import DownloadError
 
 import captions
 from config import config
@@ -21,7 +19,7 @@ MAX_FILE_SIZE_MB: int = 2000
 
 
 def _download(task: DownloadTask) -> None:
-    """Download the video with youtube-dl. Blocking — call via an executor."""
+    """Download the video with yt-dlp. Blocking — call via an executor."""
 
     resolution: str = config.minimal_resolution
     ydl_opts = {

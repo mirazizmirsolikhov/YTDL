@@ -14,12 +14,8 @@ dependencies = [
     "kurigram",
     "tgcrypto",
     "redis",
-    "youtube-dl",
+    "yt-dlp",
 ]
-
-# youtube-dl is tracked from the nightly fork rather than the stale PyPI release.
-[tool.uv.sources]
-youtube-dl = { git = "https://github.com/ytdl-org/ytdl-nightly.git" }
 
 [tool.uv]
 # This is an application, not an installable library — only its dependencies
