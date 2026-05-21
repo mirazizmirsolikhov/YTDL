@@ -1,0 +1,38 @@
+[project]
+name = "ytdl"
+version = "0.1.0"
+description = "Telegram bot for downloading YouTube / YouTube Shorts videos"
+readme = "README.md"
+# Pinned to 3.11: aiogram 2.25.1 requires aiohttp 3.8.x, which has no wheels
+# for 3.12+ and fails to build there. The Docker image uses python:3.11-slim.
+requires-python = ">=3.11,<3.12"
+license = { file = "LICENSE" }
+dependencies = [
+    "aiogram==2.25.1",
+    "pydantic",
+    "pydantic-settings",
+    "kurigram",
+    "tgcrypto",
+    "redis",
+    "yt-dlp",
+    # EJS challenge-solver scripts for YouTube; run by deno (see Dockerfile).
+    # Bundling the package avoids fetching remote components at runtime.
+    "yt-dlp-ejs",
+]
+
+[tool.uv]
+# This is an application, not an installable library — only its dependencies
+# need to be synced, the project itself is run via scripts.
+package = false
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "fakeredis",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["."]
+testpaths = ["tests"]

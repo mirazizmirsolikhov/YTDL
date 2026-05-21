@@ -1,9 +1,7 @@
 import sqlite3
 from typing import List, Tuple
 
-from config import settings
-
-ADMIN_ID: int = settings.admin_id
+from config import config
 
 
 class Database:
@@ -51,7 +49,7 @@ class Database:
                     is_active
                 )
                 VALUES (?, ?, ?, ?, ?);
-                ''', (ADMIN_ID, 'admin', 0, 1, 1)
+                ''', (config.admin_id, 'admin', 0, 1, 1)
             )
 
     def user_exists(self, user_id: int) -> bool:
@@ -129,36 +127,6 @@ class Database:
             result = self.cursor.execute(
                 '''
                 SELECT is_superuser
-                FROM users
-                WHERE user_id = ?;
-                ''', (user_id,)
-            ).fetchone()
-            return result
-
-    def set_status(self, user_id: int, status: int) -> sqlite3.Cursor:
-        """
-        Changes user's downloading status.
-        """
-
-        with self.connection:
-            result = self.cursor.execute(
-                '''
-                UPDATE users
-                SET status = ?
-                WHERE user_id = ?;
-                ''', (status, user_id)
-            )
-            return result
-
-    def see_status(self, user_id: int) -> Tuple[int]:
-        """
-        Shows user's downloading status.
-        """
-
-        with self.connection:
-            result = self.cursor.execute(
-                '''
-                SELECT status
                 FROM users
                 WHERE user_id = ?;
                 ''', (user_id,)
