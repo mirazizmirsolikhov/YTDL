@@ -15,6 +15,9 @@ dependencies = [
     "tgcrypto",
     "redis",
     "yt-dlp",
+    # EJS challenge-solver scripts for YouTube; run by deno (see Dockerfile).
+    # Bundling the package avoids fetching remote components at runtime.
+    "yt-dlp-ejs",
 ]
 
 [tool.uv]
