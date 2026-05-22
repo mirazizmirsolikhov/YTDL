@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+import time
 
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import DownloadError
@@ -16,6 +17,15 @@ BOT_ID: int = config.bot_id
 # Upload ceiling for the host account; videos larger than this are rejected
 # instead of failing mid-upload.
 MAX_FILE_SIZE_MB: int = 2000
+
+# Substring identifying YouTube's "Sign in to confirm you're not a bot" wall,
+# which means the cookies have expired — distinct from a genuinely
+# unavailable or private video.
+BOT_CHECK_MARKER: str = 'Sign in to confirm'
+# Once cookies expire every queued task fails this way; throttle the admin
+# alert to one message per hour instead of one per failing task.
+ALERT_COOLDOWN_S: int = 3600
+_last_alert_at: float = 0.0
 
 
 def _download(task: DownloadTask) -> None:
@@ -52,6 +62,26 @@ def _download(task: DownloadTask) -> None:
         ydl.download([task.url])
 
 
+async def _alert_admin_cookies_expired() -> None:
+    """Warn the admin that YouTube's bot check is blocking downloads — i.e.
+    the cookies have likely expired and need re-exporting.
+
+    The alert is routed host -> bot -> admin (the bot relays it): the userbot
+    account can reliably message the bot but not necessarily the admin. It is
+    throttled so a backlog of failing tasks yields one message, not a flood.
+    """
+
+    global _last_alert_at
+    now = time.monotonic()
+    if now - _last_alert_at < ALERT_COOLDOWN_S:
+        return
+    _last_alert_at = now
+    try:
+        await app.send_message(BOT_ID, captions.COOKIES_EXPIRED)
+    except Exception:
+        logger.exception('Failed to send the cookie-expiry alert to the admin')
+
+
 def _cleanup(video_id: str) -> None:
     """Remove the output file and any leftover yt-dlp fragment files."""
 
@@ -77,6 +107,8 @@ async def _process(task: DownloadTask) -> None:
             await loop.run_in_executor(None, _download, task)
         except DownloadError as error:
             logger.warning('Download failed for %s: %s', task.url, error)
+            if BOT_CHECK_MARKER in str(error):
+                await _alert_admin_cookies_expired()
             await result_queue.push(
                 DownloadResult(task=task, success=False, error=captions.VIDEO_UNAVAILABLE)
             )
