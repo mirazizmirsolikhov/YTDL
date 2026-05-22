@@ -25,3 +25,10 @@ VIDEO_UNAVAILABLE: str = f'''✋ {hbold("Видео недоступно или 
 FILE_TOO_BIG: str = f'''🛑 {hbold("Видео слишком большое для отправки.")}'''
 
 SEND_FAILED: str = f'''✋ {hbold("Видео скачалось, но не удалось его отправить. Попробуйте позже.")}'''
+
+# Operational alert relayed by the userbot worker to the admin. Plain text,
+# no markup: it travels host -> bot -> admin and is forwarded verbatim.
+COOKIES_EXPIRED: str = (
+    '⚠️ YouTube требует вход — cookies устарели.\n'
+    'Загрузки не работают, пока не обновишь data/cookies.txt на сервере.'
+)
