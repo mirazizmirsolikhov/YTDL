@@ -1,12 +1,17 @@
 from pathlib import Path
 from typing import Optional
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 PROJECT_ROOT: Path = Path(__file__).resolve().parent.parent
 
 
 class Config(BaseSettings):
+    # The .env file is shared with Docker Compose, so it may hold keys that
+    # are not app settings (e.g. COMPOSE_PROFILES) — ignore them instead of
+    # rejecting the whole config.
+    model_config = SettingsConfigDict(extra='ignore')
+
     admin_id: int
     token: str
     bot_id: int
