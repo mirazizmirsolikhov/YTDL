@@ -32,6 +32,11 @@ See `README.md` for setup and `REFACTORING.md` for architecture history.
 - Docker: `docker compose up -d --build`. All persistent state lives in `./data`
   (bind-mounted): `data/users.db`, `data/sessions/`, `data/downloads/`,
   `data/cookies.txt`.
+- Compose services are split into two **profiles** — `vps` (redis + bot) and
+  `home` (userbot + pot-provider) — so the userbot can run on a separate
+  residential-IP host. Each host sets `COMPOSE_PROFILES` in its `.env`
+  (`vps`, `home`, or `vps,home` for a single host); with no profile active
+  `docker compose up` starts nothing.
 - Tests: `uv run pytest`.
 
 ## Key gotchas
